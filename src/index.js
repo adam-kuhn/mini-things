@@ -11,17 +11,13 @@ for (let i = 0; i < numberOfFliers; i++) {
   flyingAgents = [...flyingAgents, newFlyer]
 }
 
-flyingAgents.forEach((flyer) => {
-  ctx.fillStyle = flyer.fillStyle
-  ctx.fillRect(flyer.currentPosition.xPosition, flyer.currentPosition.yPosition, flyer.dimensions.width, flyer.dimensions.height)
-})
+flyingAgents.forEach(drawFlyer)
 
 setInterval(() => moveRectangel(flyingAgents), 100)
 function moveRectangel (flyingAgents) {
   flyingAgents.forEach((flyer, idx) => {
-    ctx.clearRect(flyer.currentPosition.xPosition, flyer.currentPosition.yPosition, flyer.dimensions.width, flyer.dimensions.height)
-    let {xPosition} = flyer.currentPosition
-    let {yPosition} = flyer.currentPosition
+    let {xPosition, yPosition} = flyer.currentPosition
+    ctx.clearRect(xPosition, yPosition, flyer.dimensions.width * 2, flyer.dimensions.height * 2)
     if (xPosition < 150 && yPosition === idx * 10) {
       xPosition += 10
     }
@@ -35,7 +31,17 @@ function moveRectangel (flyingAgents) {
       yPosition -= 5
     }
     flyer.setCurrentPosition(xPosition, yPosition)
-    ctx.fillStyle = flyer.fillStyle
-    ctx.fillRect(xPosition, yPosition, flyer.dimensions.width, flyer.dimensions.height)
+    drawFlyer(flyer)
   })
+}
+
+function drawFlyer (flyer) {
+  const {xPosition, yPosition} = flyer.currentPosition
+  ctx.fillStyle = flyer.fillStyle
+  ctx.beginPath()
+  ctx.moveTo(xPosition, yPosition)
+  ctx.lineTo(xPosition + flyer.dimensions.width, yPosition)
+  ctx.lineTo((xPosition + flyer.dimensions.width / 2), yPosition + flyer.dimensions.height)
+  ctx.closePath()
+  ctx.fill()
 }
