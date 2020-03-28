@@ -1,0 +1,25 @@
+{
+  "name": "mini-things",
+  "version": "1.0.0",
+  "description": "some-small-projects",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adam-kuhn/mini-things.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adam-kuhn/mini-things/issues"
+  },
+  "homepage": "https://github.com/adam-kuhn/mini-things#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
+}

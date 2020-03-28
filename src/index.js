@@ -1,41 +1,15 @@
+import FlyingAgent from './flyingAgents'
 const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
-
-class FlyingAgents {
-  constructor (id, startingPosition, fillStyle) {
-    this.id = id
-    this.dimensions = {
-      width: 10,
-      height: 10
-    }
-    this.currentPosition = {
-      xPosition: startingPosition,
-      yPosition: startingPosition
-    }
-    this.fillStyle = fillStyle
-  }
-  setCurrentPosition (x, y) {
-    this.currentPosition.xPosition = x
-    this.currentPosition.yPosition = y
-  }
-  getOrientation () {
-    // return direction
-  }
-  getPosition () {
-    // return current position
-  }
-}
 
 const numberOfFliers = 10
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
   const fillStyle = `#FF${i * 1000}`
-  const newFlyer = new FlyingAgents(i, startingPosition, fillStyle)
+  const newFlyer = new FlyingAgent(i, startingPosition, fillStyle)
   flyingAgents = [...flyingAgents, newFlyer]
 }
-
-// ctx.fillStyle = '#FF2304'
 
 flyingAgents.forEach((flyer) => {
   ctx.fillStyle = flyer.fillStyle
