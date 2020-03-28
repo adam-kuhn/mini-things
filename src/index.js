@@ -17,7 +17,8 @@ setInterval(() => moveRectangel(flyingAgents), 100)
 function moveRectangel (flyingAgents) {
   flyingAgents.forEach((flyer, idx) => {
     let {xPosition, yPosition} = flyer.currentPosition
-    ctx.clearRect(xPosition, yPosition, flyer.dimensions.width * 2, flyer.dimensions.height * 2)
+    const {width, height} = flyer.dimensions
+    ctx.clearRect(xPosition - (width / 2), yPosition, width, height)
     if (xPosition < 150 && yPosition === idx * 10) {
       xPosition += 10
     }
@@ -37,11 +38,12 @@ function moveRectangel (flyingAgents) {
 
 function drawFlyer (flyer) {
   const {xPosition, yPosition} = flyer.currentPosition
+  const {width, height} = flyer.dimensions
   ctx.fillStyle = flyer.fillStyle
   ctx.beginPath()
   ctx.moveTo(xPosition, yPosition)
-  ctx.lineTo(xPosition + flyer.dimensions.width, yPosition)
-  ctx.lineTo((xPosition + flyer.dimensions.width / 2), yPosition + flyer.dimensions.height)
+  ctx.lineTo(xPosition + width / 2, yPosition + height)
+  ctx.lineTo((xPosition - width / 2), yPosition + height)
   ctx.closePath()
   ctx.fill()
 }
