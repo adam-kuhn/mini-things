@@ -32,15 +32,16 @@ function moveRectangel (flyingAgents) {
   flyingAgents.forEach((flyer, idx) => {
     let {xPosition, yPosition} = flyer.currentPosition
     const {width, height} = flyer.dimensions
+    const xOriginForTranslate = xPosition + (width / 2)
     const yOriginForTranslate = yPosition + (height / 2)
     const flyerOrientation = flyer.getOrientation()
 
     // this rotates triangle to same position as when it is drawn
-    ctx.translate(xPosition, yOriginForTranslate)
+    ctx.translate(xOriginForTranslate, yOriginForTranslate)
     ctx.rotate(flyerOrientation * Math.PI / 180)
-    ctx.translate(-xPosition, -yOriginForTranslate)
+    ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
     // clear rectangle
-    ctx.clearRect(xPosition - (width / 2), yPosition, width, height)
+    ctx.clearRect(xPosition, yPosition - height + 1, width, height)
     // reset canvas back to origin
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     // need to convert the positions to be something, that add 1 point of movement base on orientation
@@ -72,15 +73,12 @@ function drawFlyer (flyer) {
   const {width, height} = flyer.dimensions
   const flyerOrientation = flyer.getOrientation()
   ctx.fillStyle = flyer.fillStyle
+  const xOriginForTranslate = xPosition + (width / 2) // needed if doing icon
   const yOriginForTranslate = yPosition + (height / 2)
-  ctx.translate(xPosition, yOriginForTranslate)
+  ctx.translate(xOriginForTranslate, yOriginForTranslate)
   ctx.rotate(flyerOrientation * Math.PI / 180)
-  ctx.translate(-xPosition, -yOriginForTranslate)
-  ctx.beginPath()
-  ctx.moveTo(xPosition, yPosition)
-  ctx.lineTo(xPosition + width / 2, yPosition + height)
-  ctx.lineTo((xPosition - width / 2), yPosition + height)
-  // ctx.closePath() // not needed if using fill
-  ctx.fill()
+  ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
+  ctx.font = '600 10px "Font Awesome 5 Free"'
+  ctx.fillText('\uf197', xPosition, yPosition)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
 }
