@@ -32,14 +32,10 @@ function moveRectangel (flyingAgents) {
   flyingAgents.forEach((flyer, idx) => {
     let {xPosition, yPosition} = flyer.currentPosition
     const {width, height} = flyer.dimensions
-    const xOriginForTranslate = xPosition + (width / 2)
-    const yOriginForTranslate = yPosition + (height / 2)
     const flyerOrientation = flyer.getOrientation()
 
     // this rotates triangle to same position as when it is drawn
-    ctx.translate(xOriginForTranslate, yOriginForTranslate)
-    ctx.rotate(flyerOrientation * Math.PI / 180)
-    ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
+    rotateContextBasedOnOrientation(flyer)
     // clear rectangle
     ctx.clearRect(xPosition, yPosition - height + 1, width, height)
     // reset canvas back to origin
@@ -70,15 +66,20 @@ function moveRectangel (flyingAgents) {
 // look into Path2D
 function drawFlyer (flyer) {
   const {xPosition, yPosition} = flyer.currentPosition
-  const {width, height} = flyer.dimensions
-  const flyerOrientation = flyer.getOrientation()
   ctx.fillStyle = flyer.fillStyle
-  const xOriginForTranslate = xPosition + (width / 2) // needed if doing icon
-  const yOriginForTranslate = yPosition + (height / 2)
-  ctx.translate(xOriginForTranslate, yOriginForTranslate)
-  ctx.rotate(flyerOrientation * Math.PI / 180)
-  ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
+  rotateContextBasedOnOrientation(flyer)
   ctx.font = '600 10px "Font Awesome 5 Free"'
   ctx.fillText('\uf197', xPosition, yPosition)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
+}
+
+function rotateContextBasedOnOrientation (flyer) {
+  const {xPosition, yPosition} = flyer.currentPosition
+  const {width, height} = flyer.dimensions
+  const xOriginForTranslate = xPosition + (width / 2)
+  const yOriginForTranslate = yPosition + (height / 2)
+  const flyerOrientation = flyer.getOrientation()
+  ctx.translate(xOriginForTranslate, yOriginForTranslate)
+  ctx.rotate(flyerOrientation * Math.PI / 180)
+  ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
 }
