@@ -1,6 +1,7 @@
 import FlyingAgent from './flyingAgents'
 const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
+ctx.font = '600 10px "Font Awesome 5 Free"'
 
 // // test rotate
 // ctx.fillStyle = '#FF0000'
@@ -68,7 +69,6 @@ function drawFlyer (flyer) {
   const {xPosition, yPosition} = flyer.currentPosition
   ctx.fillStyle = flyer.fillStyle
   rotateContextBasedOnOrientation(flyer)
-  ctx.font = '600 10px "Font Awesome 5 Free"'
   ctx.fillText('\uf197', xPosition, yPosition)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
 }
