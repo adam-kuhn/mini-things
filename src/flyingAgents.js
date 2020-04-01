@@ -1,6 +1,7 @@
 export default class FlyingAgent {
   constructor (id, startingPosition, fillStyle) {
     this.id = id
+    this.orientationInDegrees = 45
     this.dimensions = {
       width: 10,
       height: 10
@@ -16,7 +17,7 @@ export default class FlyingAgent {
     this.currentPosition.yPosition = y
   }
   getOrientation () {
-    // return direction
+    return this.orientationInDegrees
   }
   getPosition () {
     // return current position
