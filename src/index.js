@@ -36,8 +36,9 @@ function animationFrame () {
   moveRectangel(flyingAgents)
   window.requestAnimationFrame(animationFrame)
 }
+
 function moveRectangel (flyingAgents) {
-  flyingAgents.forEach((flyer, idx) => {
+  flyingAgents.forEach((flyer) => {
     const {xPosition, yPosition} = flyer.currentPosition
     if (yPosition >= canvas.height - 20) {
       flyer.setOrientation(180)
