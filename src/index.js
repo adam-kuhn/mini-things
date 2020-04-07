@@ -17,7 +17,7 @@ ctx.font = '600 10px "Font Awesome 5 Free"'
 
 // ctx.fillRect(10, 10, 10, 50)
 
-const numberOfFliers = 1
+const numberOfFliers = 10
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
@@ -28,37 +28,30 @@ for (let i = 0; i < numberOfFliers; i++) {
 
 flyingAgents.forEach(drawFlyer)
 
-setInterval(() => moveRectangel(flyingAgents), 50)
+window.requestAnimationFrame(animationFrame)
+function animationFrame () {
+  ctx.globalCompositeOperation = 'source-over'
+  ctx.fillStyle = 'green'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  moveRectangel(flyingAgents)
+  window.requestAnimationFrame(animationFrame)
+}
 function moveRectangel (flyingAgents) {
   flyingAgents.forEach((flyer, idx) => {
-    let {xPosition, yPosition} = flyer.currentPosition
-    const {width, height} = flyer.dimensions
+    const {xPosition, yPosition} = flyer.currentPosition
+    if (yPosition >= canvas.height - 20) {
+      flyer.setOrientation(180)
+    }
+    if (yPosition >= canvas.height - 20 && xPosition <= 20) {
+      flyer.setOrientation(315)
+    }
+    if (yPosition <= 20) {
+      flyer.setOrientation(60)
+    }
     const flyerOrientation = flyer.getOrientation()
+    const newXPosition = Math.floor(2 * Math.cos(flyerOrientation * Math.PI / 180) + xPosition) // floor to prevent extra dots being left from clear when drawing
+    const newYPosition = Math.floor(2 * Math.sin(flyerOrientation * Math.PI / 180) + yPosition)
 
-    // this rotates triangle to same position as when it is drawn
-    rotateContextBasedOnOrientation(flyer)
-    // clear rectangle
-    ctx.clearRect(xPosition, yPosition - height + 1, width, height)
-    // reset canvas back to origin
-    ctx.setTransform(1, 0, 0, 1, 0, 0)
-    // need to convert the positions to be something, that add 1 point of movement base on orientation
-    // 0deg would mean 1 on x
-    // x = positionConstanst * cos(deg)
-    // y = positionConstant * sin(deg)
-    const newXPosition = Math.floor(2 * Math.sin(flyerOrientation * Math.PI / 180) + xPosition) // floor to prevent extra dots being left from clear when drawing
-    const newYPosition = Math.floor(2 * Math.cos(flyerOrientation * Math.PI / 180) + yPosition)
-    // if (xPosition < 150 && yPosition === idx * 10) {
-    //   xPosition += 10
-    // }
-    // if (xPosition === 150 && yPosition < 75) {
-    //   yPosition += 5
-    // }
-    // if (yPosition === 75 && xPosition <= 150) {
-    //   xPosition -= 10
-    // }
-    // if (xPosition === idx * 10 && yPosition <= 75) {
-    //   yPosition -= 5
-    // }
     flyer.setCurrentPosition(newXPosition, newYPosition)
     drawFlyer(flyer)
   })

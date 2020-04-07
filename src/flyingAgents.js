@@ -19,6 +19,9 @@ export default class FlyingAgent {
   getOrientation () {
     return this.orientationInDegrees
   }
+  setOrientation (orientation) {
+    this.orientationInDegrees = orientation
+  }
   getPosition () {
     // return current position
   }
