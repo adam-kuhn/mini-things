@@ -30,11 +30,15 @@ flyingAgents.forEach(drawFlyer)
 
 window.requestAnimationFrame(animationFrame)
 function animationFrame () {
+  clearCanvas()
+  moveRectangel(flyingAgents)
+  window.requestAnimationFrame(animationFrame)
+}
+
+function clearCanvas () {
   ctx.globalCompositeOperation = 'source-over'
   ctx.fillStyle = 'green'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
-  moveRectangel(flyingAgents)
-  window.requestAnimationFrame(animationFrame)
 }
 
 function moveRectangel (flyingAgents) {
