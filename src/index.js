@@ -67,6 +67,9 @@ function drawFlyer (flyer) {
   const {xPosition, yPosition} = flyer.currentPosition
   ctx.fillStyle = flyer.fillStyle
   rotateContextBasedOnOrientation(flyer)
+  // TODO: Either draw custom shape and remove space ship or fix alignment
+  // text is drawn above a horizontal from the origin. Resulting in the space ship, 
+  // be slightly off the correct orietation in which it is moving
   ctx.fillText('\uf197', xPosition, yPosition)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
 }
