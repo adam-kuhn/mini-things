@@ -17,8 +17,13 @@
     "url": "https://github.com/adam-kuhn/mini-things/issues"
   },
   "homepage": "https://github.com/adam-kuhn/mini-things#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.0",
+    "connect": "^3.7.0",
+    "serve-static": "^1.14.1"
+  },
   "devDependencies": {
+    "copy-webpack-plugin": "^5.1.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }
