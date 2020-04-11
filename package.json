@@ -4,6 +4,7 @@
   "description": "some-small-projects",
   "private": true,
   "scripts": {
+    "start": "webpack && node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
