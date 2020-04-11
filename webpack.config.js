@@ -5,6 +5,6 @@ module.exports = {
   entry: path.join(__dirname, './client/index.js'),
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, './public')
+    path: path.resolve(__dirname, 'public')
   }
 }
