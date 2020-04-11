@@ -1,2 +1,2 @@
 # mini-things
-combine frontend JS files, by running `npm run build` then open html file in the browser
+To start the project run `npm start` and go to http://localhost:3000/
