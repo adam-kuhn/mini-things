@@ -3,6 +3,11 @@ const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
 ctx.font = '600 10px "Font Awesome 5 Free"'
 // flyers within neighbour radius try to align themselves in the same orientation
+const CANVAS_MARGIN = 20
+const FLYER_AT_TOP = 'top'
+const FLYER_AT_BOTTOM = 'bottom'
+const FLYER_AT_LEFT_EDGE = 'left'
+const FLYER_AT_RIGHT_EDGE = 'right'
 const NEIGHBOUR_RADIUS = 30
 const RADIANS_TO_DEGREES = 180 / Math.PI
 const DEGREES_TO_RADIANS = Math.PI / 180
@@ -49,44 +54,38 @@ function moveRectangel (flyingAgents) {
   flyingAgents.forEach((flyer, idx, self) => {
     const currentFlyerPosition = flyer.getPosition()
     const {xPosition, yPosition} = currentFlyerPosition
-    if (yPosition >= canvas.height - 20) {
-      flyer.setOrientation(180)
-    }
-    if (yPosition >= canvas.height - 20 && xPosition <= 20) {
-      flyer.setOrientation(315)
-    }
-    if (yPosition <= 20) {
-      flyer.setOrientation(60)
-    }
-    const flyersInNeighbourhood = self.filter((flyer2, idx2) => {
-      if (idx !== idx2) {
-        const neighbourFlyer = flyer2.getPosition()
-        const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourFlyer)
-        return distanceBetweenFlyers < NEIGHBOUR_RADIUS
+    const flyerAtCanvasEdge = isCurrentyFlyerAtEdgeOfCanvas(flyer)
+    let flyerOrientation = flyer.getOrientation()
+    if (flyerAtCanvasEdge) {
+      flyerOrientation = getOrientationFromEdge(flyerAtCanvasEdge, flyerOrientation)
+    } else {
+      const flyersInNeighbourhood = self.filter((flyer2, idx2) => {
+        if (idx !== idx2) {
+          const neighbourFlyer = flyer2.getPosition()
+          const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourFlyer)
+          return distanceBetweenFlyers < NEIGHBOUR_RADIUS
+        }
+        return false
+      })
+      if (flyersInNeighbourhood.length) {
+        const averageAlignment = getAverageOrientation(flyersInNeighbourhood)
+        console.log(averageAlignment)
+        // cohesion is the the center of all items in neighbourod, and the current agent should rotate to that point
+        // should point of cohesion include the current flyer?
+        const pointOfCohesion = getPointOfCohesion(flyersInNeighbourhood)
+        const distanceToPointOfCohesion = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfCohesion)
+        const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfCohesion.xPosition) / distanceToPointOfCohesion) * RADIANS_TO_DEGREES
+        console.log(pointOfCohesion, angleToPointOfCohesion)
+        // sepration is to prevent flyers from overcrowding to one area
+        // this will be an average of the distance bewteen the current flyers and neighbours, and set to a negative value?
+        const seperationAngle = getSeperationAngle(flyer, flyersInNeighbourhood)
+        console.log('sep', seperationAngle)
+        flyerOrientation = (averageAlignment + angleToPointOfCohesion + seperationAngle) / 3
+        console.log(flyerOrientation)
       }
-      return false
-    })
-    if (flyersInNeighbourhood.length) {
-      const averageAlignment = getAverageOrientation(flyersInNeighbourhood)
-      console.log(averageAlignment)
-      // cohesion is the the center of all items in neighbourod, and the current agent should rotate to that point
-      // should point of cohesion include the current flyer?
-      const pointOfCohesion = getPointOfCohesion(flyersInNeighbourhood)
-      const distanceToPointOfCohesion = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfCohesion)
-      const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfCohesion.xPosition) / distanceToPointOfCohesion) * RADIANS_TO_DEGREES
-      console.log(pointOfCohesion, angleToPointOfCohesion)
-      // sepration is to prevent flyers from overcrowding to one area
-      // this will be an average of the distance bewteen the current flyers and neighbours, and set to a negative value?
-      const seperationAngle = getSeperationAngle(flyer, flyersInNeighbourhood)
-      console.log('sep', seperationAngle)
-      const resultingOrientation = (averageAlignment + angleToPointOfCohesion + seperationAngle) / 3
-      flyer.setOrientation(resultingOrientation)
-      console.log(resultingOrientation)
     }
 
-    console.log('flyer ', flyer.id, 'has neightbours ', flyersInNeighbourhood)
-    const flyerOrientation = flyer.getOrientation()
-
+    flyer.setOrientation(flyerOrientation)
     const newXPosition = Math.floor(2 * Math.cos(flyerOrientation * DEGREES_TO_RADIANS) + xPosition) // floor to prevent extra dots being left from clear when drawing
     const newYPosition = Math.floor(2 * Math.sin(flyerOrientation * DEGREES_TO_RADIANS) + yPosition)
 
@@ -164,4 +163,74 @@ function getSeperationAngle (currentFlyer, neighborhoodFlyers) {
   const distanceToPointOfSeperation = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfSeperation)
   const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfSeperation.xPosition) / distanceToPointOfSeperation) * RADIANS_TO_DEGREES
   return angleToPointOfCohesion
+}
+
+function isCurrentyFlyerAtEdgeOfCanvas (flyer) {
+  const {xPosition, yPosition} = flyer.getPosition()
+  if (xPosition <= CANVAS_MARGIN) {
+    return FLYER_AT_LEFT_EDGE
+  }
+  if (xPosition >= canvas.width - CANVAS_MARGIN) {
+    return FLYER_AT_RIGHT_EDGE
+  }
+  if (yPosition <= CANVAS_MARGIN) {
+    return FLYER_AT_TOP
+  }
+  if (yPosition >= canvas.height - CANVAS_MARGIN) {
+    return FLYER_AT_BOTTOM
+  }
+  return null
+}
+
+//TODO: flyers getting stuck at edge when multiple end up with in the margin
+// need to over ride behaviour somehow. May just need to make the neighbourhood radius smaller
+// then the margin
+
+function getOrientationFromEdge (edge, flyerOrientation) {
+  let minAngle
+  let maxAngle
+  switch (edge) {
+    case FLYER_AT_LEFT_EDGE:
+      if (flyerOrientation >= 180) {
+        minAngle = 270
+        maxAngle = 360
+      } else {
+        minAngle = 0
+        maxAngle = 90
+      }
+      break
+    case FLYER_AT_RIGHT_EDGE:
+      if (flyerOrientation >= 270) {
+        maxAngle = 270
+        minAngle = 180
+      } else {
+        minAngle = 90
+        maxAngle = 180
+      }
+      break
+    case FLYER_AT_BOTTOM:
+      if (flyerOrientation <= 90) {
+        minAngle = 270
+        maxAngle = 360
+      } else {
+        minAngle = 180
+        maxAngle = 270
+      }
+      break
+    case FLYER_AT_TOP:
+      if (flyerOrientation >= 270) {
+        minAngle = 0
+        maxAngle = 90
+      } else {
+        minAngle = 90
+        maxAngle = 180
+      }
+  }
+  const newOrientation = getRandomAngle(minAngle, maxAngle)
+  console.log(newOrientation)
+  return newOrientation
+}
+
+function getRandomAngle (min, max) {
+  return Math.floor(Math.random() * (max - min) + min)
 }
