@@ -21,7 +21,7 @@ const DEGREES_TO_RADIANS = Math.PI / 180
 
 // ctx.fillRect(10, 10, 10, 50)
 
-const numberOfFliers = 10
+const numberOfFliers = 50
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
@@ -79,7 +79,7 @@ function moveRectangel (flyingAgents) {
       // this will be an average of the distance bewteen the current flyers and neighbours, and set to a negative value?
       const seperationAngle = getSeperationAngle(flyer, flyersInNeighbourhood)
       console.log('sep', seperationAngle)
-      const resultingOrientation = averageAlignment + angleToPointOfCohesion + seperationAngle
+      const resultingOrientation = (averageAlignment + angleToPointOfCohesion + seperationAngle) / 3
       flyer.setOrientation(resultingOrientation)
       console.log(resultingOrientation)
     }
