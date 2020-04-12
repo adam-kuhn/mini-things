@@ -64,6 +64,11 @@ function moveRectangel (flyingAgents) {
       }
       return false
     })
+    if (flyersInNeighbourhood.length) {
+      const averageAlignment = getAverageOrientation(flyersInNeighbourhood)
+      console.log(averageAlignment)
+    }
+
     console.log('flyer ', flyer.id, 'has neightbours ', flyersInNeighbourhood)
     const flyerOrientation = flyer.getOrientation()
 
@@ -104,4 +109,11 @@ function calculateDistanceBetweenTwoFlyers (currentFlyerPosition, neighbourFlyer
   // a^2 + b^2 = c^2
   const distanceBetweenFlyers = Math.sqrt(Math.pow(yDifference, 2) + Math.pow(xDifference, 2))
   return distanceBetweenFlyers
+}
+
+function getAverageOrientation (neighborhoodFlyers) {
+  const averageOrientation = neighborhoodFlyers.reduce((accumulated, current) => {
+    return current.getOrientation() + accumulated
+  }, 0) / neighborhoodFlyers.length
+  return averageOrientation
 }
