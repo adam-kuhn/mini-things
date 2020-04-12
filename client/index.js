@@ -70,7 +70,10 @@ function moveRectangel (flyingAgents) {
       // cohesion is the the center of all items in neighbourod, and the current agent should rotate to that point
       // should point of cohesion include the current flyer?
       const pointOfCohesion = getPointOfCohesion(flyersInNeighbourhood)
-      console.log(pointOfCohesion)
+      const distanceToPointOfCohesion = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfCohesion)
+      const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfCohesion.xPosition) / distanceToPointOfCohesion) * 180 / Math.PI
+
+      console.log(pointOfCohesion, angleToPointOfCohesion)
     }
 
     console.log('flyer ', flyer.id, 'has neightbours ', flyersInNeighbourhood)
