@@ -74,8 +74,14 @@ function moveRectangel (flyingAgents) {
       const pointOfCohesion = getPointOfCohesion(flyersInNeighbourhood)
       const distanceToPointOfCohesion = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfCohesion)
       const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfCohesion.xPosition) / distanceToPointOfCohesion) * RADIANS_TO_DEGREES
-
       console.log(pointOfCohesion, angleToPointOfCohesion)
+      // sepration is to prevent flyers from overcrowding to one area
+      // this will be an average of the distance bewteen the current flyers and neighbours, and set to a negative value?
+      const seperationAngle = getSeperationAngle(flyer, flyersInNeighbourhood)
+      console.log('sep', seperationAngle)
+      const resultingOrientation = averageAlignment + angleToPointOfCohesion + seperationAngle
+      flyer.setOrientation(resultingOrientation)
+      console.log(resultingOrientation)
     }
 
     console.log('flyer ', flyer.id, 'has neightbours ', flyersInNeighbourhood)
@@ -140,4 +146,22 @@ function getPointOfCohesion (neighborhoodFlyers) {
     yPosition: aggregateOfPosition.yPosition / neighborhoodFlyers.length
   }
   return pointOfCohesion
+}
+
+function getSeperationAngle (currentFlyer, neighborhoodFlyers) {
+  const currentFlyerPosition = currentFlyer.getPosition()
+  const aggregatedSeperationPositon = neighborhoodFlyers.reduce((accumulated, current) => {
+    const neighbourPosition = current.getPosition()
+    return {
+      xPosition: accumulated.xPosition + currentFlyerPosition.xPosition - neighbourPosition.xPosition,
+      yPosition: accumulated.yPosition + currentFlyerPosition.yPosition - neighbourPosition.yPosition
+    }
+  }, {xPosition: 0, yPosition: 0})
+  const pointOfSeperation = {
+    xPosition: aggregatedSeperationPositon.xPosition / neighborhoodFlyers.length * -1,
+    yPosition: aggregatedSeperationPositon.yPosition / neighborhoodFlyers.length * -1
+  }
+  const distanceToPointOfSeperation = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfSeperation)
+  const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfSeperation.xPosition) / distanceToPointOfSeperation) * RADIANS_TO_DEGREES
+  return angleToPointOfCohesion
 }
