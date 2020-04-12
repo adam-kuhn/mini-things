@@ -67,6 +67,10 @@ function moveRectangel (flyingAgents) {
     if (flyersInNeighbourhood.length) {
       const averageAlignment = getAverageOrientation(flyersInNeighbourhood)
       console.log(averageAlignment)
+      // cohesion is the the center of all items in neighbourod, and the current agent should rotate to that point
+      // should point of cohesion include the current flyer?
+      const pointOfCohesion = getPointOfCohesion(flyersInNeighbourhood)
+      console.log(pointOfCohesion)
     }
 
     console.log('flyer ', flyer.id, 'has neightbours ', flyersInNeighbourhood)
@@ -116,4 +120,19 @@ function getAverageOrientation (neighborhoodFlyers) {
     return current.getOrientation() + accumulated
   }, 0) / neighborhoodFlyers.length
   return averageOrientation
+}
+
+function getPointOfCohesion (neighborhoodFlyers) {
+  const aggregateOfPosition = neighborhoodFlyers.reduce((accumulated, current) => {
+    const currentPosition = current.getPosition()
+    return {
+      xPosition: accumulated.xPosition + currentPosition.xPosition,
+      yPosition: accumulated.yPosition + currentPosition.yPosition
+    }
+  }, {xPosition: 0, yPosition: 0})
+  const pointOfCohesion = {
+    xPosition: aggregateOfPosition.xPosition / neighborhoodFlyers.length,
+    yPosition: aggregateOfPosition.yPosition / neighborhoodFlyers.length
+  }
+  return pointOfCohesion
 }
