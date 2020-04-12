@@ -4,6 +4,8 @@ const ctx = canvas.getContext('2d')
 ctx.font = '600 10px "Font Awesome 5 Free"'
 // flyers within neighbour radius try to align themselves in the same orientation
 const NEIGHBOUR_RADIUS = 30
+const RADIANS_TO_DEGREES = 180 / Math.PI
+const DEGREES_TO_RADIANS = Math.PI / 180
 
 // // test rotate
 // ctx.fillStyle = '#FF0000'
@@ -71,7 +73,7 @@ function moveRectangel (flyingAgents) {
       // should point of cohesion include the current flyer?
       const pointOfCohesion = getPointOfCohesion(flyersInNeighbourhood)
       const distanceToPointOfCohesion = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfCohesion)
-      const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfCohesion.xPosition) / distanceToPointOfCohesion) * 180 / Math.PI
+      const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfCohesion.xPosition) / distanceToPointOfCohesion) * RADIANS_TO_DEGREES
 
       console.log(pointOfCohesion, angleToPointOfCohesion)
     }
@@ -79,8 +81,8 @@ function moveRectangel (flyingAgents) {
     console.log('flyer ', flyer.id, 'has neightbours ', flyersInNeighbourhood)
     const flyerOrientation = flyer.getOrientation()
 
-    const newXPosition = Math.floor(2 * Math.cos(flyerOrientation * Math.PI / 180) + xPosition) // floor to prevent extra dots being left from clear when drawing
-    const newYPosition = Math.floor(2 * Math.sin(flyerOrientation * Math.PI / 180) + yPosition)
+    const newXPosition = Math.floor(2 * Math.cos(flyerOrientation * DEGREES_TO_RADIANS) + xPosition) // floor to prevent extra dots being left from clear when drawing
+    const newYPosition = Math.floor(2 * Math.sin(flyerOrientation * DEGREES_TO_RADIANS) + yPosition)
 
     flyer.setCurrentPosition(newXPosition, newYPosition)
     drawFlyer(flyer)
@@ -106,7 +108,7 @@ function rotateContextBasedOnOrientation (flyer) {
   const yOriginForTranslate = yPosition + (height / 2)
   const flyerOrientation = flyer.getOrientation()
   ctx.translate(xOriginForTranslate, yOriginForTranslate)
-  ctx.rotate(flyerOrientation * Math.PI / 180)
+  ctx.rotate(flyerOrientation * DEGREES_TO_RADIANS)
   ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
 }
 
