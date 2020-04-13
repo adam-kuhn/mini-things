@@ -11,6 +11,7 @@ const FLYER_AT_RIGHT_EDGE = 'right'
 const NEIGHBOUR_RADIUS = 30
 const RADIANS_TO_DEGREES = 180 / Math.PI
 const DEGREES_TO_RADIANS = Math.PI / 180
+const MAX_VELOCITY = 3
 
 // // test rotate
 // ctx.fillStyle = '#FF0000'
@@ -81,6 +82,12 @@ function moveRectangel (flyingAgents) {
         const yVelocity = neighbourhoodVector.yVelocity + coehsionVector.yPosition + separationVector.yPosition
         flyer.velocity.xVelocity += xVeloctiy
         flyer.velocity.yVelocity += yVelocity
+        if (flyer.velocity.xVelocity > MAX_VELOCITY) {
+          flyer.velocity.xVelocity = MAX_VELOCITY
+        }
+        if (flyer.velocity.yVelocity > MAX_VELOCITY) {
+          flyer.velocity.yVelocity = MAX_VELOCITY
+        }
       }
     }
 
