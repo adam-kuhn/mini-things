@@ -26,7 +26,7 @@ const DEGREES_TO_RADIANS = Math.PI / 180
 
 // ctx.fillRect(10, 10, 10, 50)
 
-const numberOfFliers = 50
+const numberOfFliers = 5
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
@@ -68,27 +68,26 @@ function moveRectangel (flyingAgents) {
         return false
       })
       if (flyersInNeighbourhood.length) {
-        const averageAlignment = getAverageOrientation(flyersInNeighbourhood)
-        console.log(averageAlignment)
+        const neighbourhoodVector = matchNeighbourhoodVector(flyer, flyersInNeighbourhood)
+        console.log(neighbourhoodVector)
         // cohesion is the the center of all items in neighbourod, and the current agent should rotate to that point
-        // should point of cohesion include the current flyer?
-        const pointOfCohesion = getPointOfCohesion(flyersInNeighbourhood)
-        const distanceToPointOfCohesion = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfCohesion)
-        const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfCohesion.xPosition) / distanceToPointOfCohesion) * RADIANS_TO_DEGREES
-        console.log(pointOfCohesion, angleToPointOfCohesion)
+        // should point of cohesion include the current flyer? NO
+        const coehsionVector = getCohesionVector(flyersInNeighbourhood)
         // sepration is to prevent flyers from overcrowding to one area
         // this will be an average of the distance bewteen the current flyers and neighbours, and set to a negative value?
-        const seperationAngle = getSeperationAngle(flyer, flyersInNeighbourhood)
-        console.log('sep', seperationAngle)
-        flyerOrientation = (averageAlignment + angleToPointOfCohesion + seperationAngle) / 3
-        console.log(flyerOrientation)
+        const separationVector = getSeperationVector(flyer, flyersInNeighbourhood)
+        console.log('sep', separationVector)
+        const xVeloctiy = neighbourhoodVector.xVelocity + coehsionVector.xPosition + separationVector.xPosition
+        const yVelocity = neighbourhoodVector.yVelocity + coehsionVector.yPosition + separationVector.yPosition
+        flyer.velocity.xVelocity += xVeloctiy
+        flyer.velocity.yVelocity += yVelocity
       }
     }
 
+    const newXPosition = flyer.velocity.xVelocity + xPosition
+    const newYPosition = flyer.velocity.yVelocity + yPosition
+    flyerOrientation = Math.atan(flyer.velocity.yVelocity / flyer.velocity.xVelocity) * RADIANS_TO_DEGREES
     flyer.setOrientation(flyerOrientation)
-    const newXPosition = Math.floor(2 * Math.cos(flyerOrientation * DEGREES_TO_RADIANS) + xPosition) // floor to prevent extra dots being left from clear when drawing
-    const newYPosition = Math.floor(2 * Math.sin(flyerOrientation * DEGREES_TO_RADIANS) + yPosition)
-
     flyer.setCurrentPosition(newXPosition, newYPosition)
     drawFlyer(flyer)
   })
@@ -125,14 +124,25 @@ function calculateDistanceBetweenTwoFlyers (currentFlyerPosition, neighbourFlyer
   return distanceBetweenFlyers
 }
 
-function getAverageOrientation (neighborhoodFlyers) {
-  const averageOrientation = neighborhoodFlyers.reduce((accumulated, current) => {
-    return current.getOrientation() + accumulated
-  }, 0) / neighborhoodFlyers.length
-  return averageOrientation
+function matchNeighbourhoodVector (currentFlyer, neighborhoodFlyers) {
+  const sumOfVelocities = neighborhoodFlyers.reduce((accumulated, current) => {
+    return {
+      xVelocity: accumulated.xVelocity + current.velocity.xVelocity,
+      yVelocity: accumulated.yVelocity + current.velocity.yVelocity
+    }
+  }, {xVelocity: 0, yVelocity: 0})
+  const averagerVelocity = {
+    xVelocity: sumOfVelocities.xVelocity / neighborhoodFlyers.length,
+    yVelocity: sumOfVelocities.yVelocity / neighborhoodFlyers.length
+  }
+  const matchedVelocity = {
+    xVelocity: averagerVelocity.xVelocity - currentFlyer.velocity.xVelocity,
+    yVelocity: averagerVelocity.yVelocity - currentFlyer.velocity.yVelocity
+  }
+  return matchedVelocity
 }
 
-function getPointOfCohesion (neighborhoodFlyers) {
+function getCohesionVector (neighborhoodFlyers) {
   const aggregateOfPosition = neighborhoodFlyers.reduce((accumulated, current) => {
     const currentPosition = current.getPosition()
     return {
@@ -140,29 +150,27 @@ function getPointOfCohesion (neighborhoodFlyers) {
       yPosition: accumulated.yPosition + currentPosition.yPosition
     }
   }, {xPosition: 0, yPosition: 0})
-  const pointOfCohesion = {
+  const cohesionVector = {
     xPosition: aggregateOfPosition.xPosition / neighborhoodFlyers.length,
     yPosition: aggregateOfPosition.yPosition / neighborhoodFlyers.length
   }
-  return pointOfCohesion
+  return cohesionVector
 }
 
-function getSeperationAngle (currentFlyer, neighborhoodFlyers) {
+function getSeperationVector (currentFlyer, neighborhoodFlyers) {
   const currentFlyerPosition = currentFlyer.getPosition()
-  const aggregatedSeperationPositon = neighborhoodFlyers.reduce((accumulated, current) => {
+  const seperationVector = neighborhoodFlyers.reduce((accumulated, current) => {
     const neighbourPosition = current.getPosition()
-    return {
-      xPosition: accumulated.xPosition + currentFlyerPosition.xPosition - neighbourPosition.xPosition,
-      yPosition: accumulated.yPosition + currentFlyerPosition.yPosition - neighbourPosition.yPosition
+    const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourPosition)
+    if (distanceBetweenFlyers <= 10) {
+      return {
+        xPosition: accumulated.xPosition - neighbourPosition.xPosition - currentFlyerPosition.xPosition,
+        yPosition: accumulated.yPosition - neighbourPosition.yPosition - currentFlyerPosition.yPosition
+      }
     }
+    return accumulated
   }, {xPosition: 0, yPosition: 0})
-  const pointOfSeperation = {
-    xPosition: aggregatedSeperationPositon.xPosition / neighborhoodFlyers.length * -1,
-    yPosition: aggregatedSeperationPositon.yPosition / neighborhoodFlyers.length * -1
-  }
-  const distanceToPointOfSeperation = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, pointOfSeperation)
-  const angleToPointOfCohesion = Math.acos((currentFlyerPosition.xPosition - pointOfSeperation.xPosition) / distanceToPointOfSeperation) * RADIANS_TO_DEGREES
-  return angleToPointOfCohesion
+  return seperationVector
 }
 
 function isCurrentyFlyerAtEdgeOfCanvas (flyer) {
