@@ -149,7 +149,7 @@ function matchNeighbourhoodVector (currentFlyer, neighborhoodFlyers) {
   return matchedVelocity
 }
 
-function getCohesionVector (neighborhoodFlyers) {
+function getCohesionVector (currentFlyer, neighborhoodFlyers) {
   const aggregateOfPosition = neighborhoodFlyers.reduce((accumulated, current) => {
     const currentPosition = current.getPosition()
     return {
@@ -157,9 +157,15 @@ function getCohesionVector (neighborhoodFlyers) {
       yPosition: accumulated.yPosition + currentPosition.yPosition
     }
   }, {xPosition: 0, yPosition: 0})
-  const cohesionVector = {
+  const cohesionPoint = {
     xPosition: aggregateOfPosition.xPosition / neighborhoodFlyers.length,
     yPosition: aggregateOfPosition.yPosition / neighborhoodFlyers.length
+  }
+  const currentFlyerPosition = currentFlyer.getPosition()
+
+  const cohesionVector = {
+    xPosition: cohesionPoint.xPosition - currentFlyerPosition.xPosition,
+    yPosition: cohesionPoint.yPosition - currentFlyerPosition.yPosition
   }
   return cohesionVector
 }
