@@ -3,7 +3,7 @@ const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
 ctx.font = '600 10px "Font Awesome 5 Free"'
 // flyers within neighbour radius try to align themselves in the same orientation
-const CANVAS_MARGIN = 20
+const CANVAS_MARGIN = 0
 const FLYER_AT_TOP = 'top'
 const FLYER_AT_BOTTOM = 'bottom'
 const FLYER_AT_LEFT_EDGE = 'left'
@@ -27,7 +27,7 @@ const MAX_VELOCITY = 3
 
 // ctx.fillRect(10, 10, 10, 50)
 
-const numberOfFliers = 5
+const numberOfFliers = 3
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
@@ -171,8 +171,8 @@ function getSeperationVector (currentFlyer, neighborhoodFlyers) {
     const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourPosition)
     if (distanceBetweenFlyers <= 10) {
       return {
-        xPosition: accumulated.xPosition - neighbourPosition.xPosition - currentFlyerPosition.xPosition,
-        yPosition: accumulated.yPosition - neighbourPosition.yPosition - currentFlyerPosition.yPosition
+        xPosition: accumulated.xPosition - neighbourPosition.xPosition + currentFlyerPosition.xPosition,
+        yPosition: accumulated.yPosition - neighbourPosition.yPosition + currentFlyerPosition.yPosition
       }
     }
     return accumulated
