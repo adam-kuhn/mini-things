@@ -54,46 +54,60 @@ function clearCanvas () {
 function moveRectangel (flyingAgents) {
   flyingAgents.forEach((flyer, idx, self) => {
     const currentFlyerPosition = flyer.getPosition()
-    const {xPosition, yPosition} = currentFlyerPosition
-    const flyerAtCanvasEdge = isCurrentyFlyerAtEdgeOfCanvas(flyer)
-    let flyerOrientation = flyer.getOrientation()
-    if (flyerAtCanvasEdge) {
-      flyerOrientation = getOrientationFromEdge(flyerAtCanvasEdge, flyerOrientation)
-    } else {
-      const flyersInNeighbourhood = self.filter((flyer2, idx2) => {
-        if (idx !== idx2) {
-          const neighbourFlyer = flyer2.getPosition()
-          const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourFlyer)
-          return distanceBetweenFlyers < NEIGHBOUR_RADIUS
-        }
-        return false
-      })
-      if (flyersInNeighbourhood.length) {
-        const neighbourhoodVector = matchNeighbourhoodVector(flyer, flyersInNeighbourhood)
-        console.log(neighbourhoodVector)
-        // cohesion is the the center of all items in neighbourod, and the current agent should rotate to that point
-        // should point of cohesion include the current flyer? NO
-        const coehsionVector = getCohesionVector(flyersInNeighbourhood)
-        // sepration is to prevent flyers from overcrowding to one area
-        // this will be an average of the distance bewteen the current flyers and neighbours, and set to a negative value?
-        const separationVector = getSeperationVector(flyer, flyersInNeighbourhood)
-        console.log('sep', separationVector)
-        const xVeloctiy = neighbourhoodVector.xVelocity + coehsionVector.xPosition + separationVector.xPosition
-        const yVelocity = neighbourhoodVector.yVelocity + coehsionVector.yPosition + separationVector.yPosition
-        flyer.velocity.xVelocity += xVeloctiy
-        flyer.velocity.yVelocity += yVelocity
-        if (flyer.velocity.xVelocity > MAX_VELOCITY) {
-          flyer.velocity.xVelocity = MAX_VELOCITY
-        }
-        if (flyer.velocity.yVelocity > MAX_VELOCITY) {
-          flyer.velocity.yVelocity = MAX_VELOCITY
-        }
+    let {xPosition, yPosition} = currentFlyerPosition
+    const flyersInNeighbourhood = self.filter((flyer2, idx2) => {
+      if (idx !== idx2) {
+        const neighbourFlyer = flyer2.getPosition()
+        const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourFlyer)
+        return distanceBetweenFlyers < NEIGHBOUR_RADIUS
       }
+      return false
+    })
+    if (flyersInNeighbourhood.length) {
+      const neighbourhoodVector = matchNeighbourhoodVector(flyer, flyersInNeighbourhood)
+      console.log(neighbourhoodVector)
+      // cohesion is the the center of all items in neighbourod, and the current agent should rotate to that point
+      // should point of cohesion include the current flyer? NO
+      const coehsionVector = getCohesionVector(flyer, flyersInNeighbourhood)
+      // sepration is to prevent flyers from overcrowding to one area
+      // this will be an average of the distance bewteen the current flyers and neighbours, and set to a negative value?
+      const separationVector = getSeperationVector(flyer, flyersInNeighbourhood)
+      console.log('sep', separationVector)
+      const xVeloctiy = neighbourhoodVector.xVelocity + coehsionVector.xPosition + separationVector.xPosition
+      const yVelocity = neighbourhoodVector.yVelocity + coehsionVector.yPosition + separationVector.yPosition
+
+      flyer.velocity.xVelocity += xVeloctiy / 100
+      flyer.velocity.yVelocity += yVelocity / 100
+    }
+    if (flyer.velocity.xVelocity > MAX_VELOCITY) {
+      flyer.velocity.xVelocity = MAX_VELOCITY
+    } else if (flyer.velocity.xVelocity < -MAX_VELOCITY) {
+      flyer.velocity.xVelocity = -MAX_VELOCITY
+    }
+    if (flyer.velocity.yVelocity > MAX_VELOCITY) {
+      flyer.velocity.yVelocity = MAX_VELOCITY
+    } else if (flyer.velocity.yVelocity < -MAX_VELOCITY) {
+      flyer.velocity.yVelocity = -MAX_VELOCITY
     }
 
-    const newXPosition = flyer.velocity.xVelocity + xPosition
-    const newYPosition = flyer.velocity.yVelocity + yPosition
-    flyerOrientation = Math.atan(flyer.velocity.yVelocity / flyer.velocity.xVelocity) * RADIANS_TO_DEGREES
+    if (xPosition > canvas.width - CANVAS_MARGIN) {
+      flyer.velocity.xVelocity *= -1
+      xPosition = canvas.width
+    } else if (xPosition < CANVAS_MARGIN) {
+      flyer.velocity.xVelocity *= -1
+      xPosition = 0
+    }
+    if (yPosition > canvas.height - CANVAS_MARGIN) {
+      flyer.velocity.yVelocity *= -1
+      yPosition = canvas.height
+    } else if (yPosition < CANVAS_MARGIN) {
+      flyer.velocity.yVelocity *= -1
+      yPosition = 0
+    }
+    let newXPosition = flyer.velocity.xVelocity + xPosition
+    let newYPosition = flyer.velocity.yVelocity + yPosition
+    // this does not change orientation correctly
+    const flyerOrientation = Math.atan(newXPosition / newYPosition) * RADIANS_TO_DEGREES
     flyer.setOrientation(flyerOrientation)
     flyer.setCurrentPosition(newXPosition, newYPosition)
     drawFlyer(flyer)
@@ -184,74 +198,4 @@ function getSeperationVector (currentFlyer, neighborhoodFlyers) {
     return accumulated
   }, {xPosition: 0, yPosition: 0})
   return seperationVector
-}
-
-function isCurrentyFlyerAtEdgeOfCanvas (flyer) {
-  const {xPosition, yPosition} = flyer.getPosition()
-  if (xPosition <= CANVAS_MARGIN) {
-    return FLYER_AT_LEFT_EDGE
-  }
-  if (xPosition >= canvas.width - CANVAS_MARGIN) {
-    return FLYER_AT_RIGHT_EDGE
-  }
-  if (yPosition <= CANVAS_MARGIN) {
-    return FLYER_AT_TOP
-  }
-  if (yPosition >= canvas.height - CANVAS_MARGIN) {
-    return FLYER_AT_BOTTOM
-  }
-  return null
-}
-
-//TODO: flyers getting stuck at edge when multiple end up with in the margin
-// need to over ride behaviour somehow. May just need to make the neighbourhood radius smaller
-// then the margin
-
-function getOrientationFromEdge (edge, flyerOrientation) {
-  let minAngle
-  let maxAngle
-  switch (edge) {
-    case FLYER_AT_LEFT_EDGE:
-      if (flyerOrientation >= 180) {
-        minAngle = 270
-        maxAngle = 360
-      } else {
-        minAngle = 0
-        maxAngle = 90
-      }
-      break
-    case FLYER_AT_RIGHT_EDGE:
-      if (flyerOrientation >= 270) {
-        maxAngle = 270
-        minAngle = 180
-      } else {
-        minAngle = 90
-        maxAngle = 180
-      }
-      break
-    case FLYER_AT_BOTTOM:
-      if (flyerOrientation <= 90) {
-        minAngle = 270
-        maxAngle = 360
-      } else {
-        minAngle = 180
-        maxAngle = 270
-      }
-      break
-    case FLYER_AT_TOP:
-      if (flyerOrientation >= 270) {
-        minAngle = 0
-        maxAngle = 90
-      } else {
-        minAngle = 90
-        maxAngle = 180
-      }
-  }
-  const newOrientation = getRandomAngle(minAngle, maxAngle)
-  console.log(newOrientation)
-  return newOrientation
-}
-
-function getRandomAngle (min, max) {
-  return Math.floor(Math.random() * (max - min) + min)
 }
