@@ -11,7 +11,7 @@ export default class FlyingAgent {
       yPosition: startingPosition
     }
     this.velocity = {
-      xVelocity: 0.5,
+      xVelocity: 0.1,
       yVelocity: 0.5
     }
     this.fillStyle = fillStyle

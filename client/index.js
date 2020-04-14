@@ -8,7 +8,7 @@ const FLYER_AT_TOP = 'top'
 const FLYER_AT_BOTTOM = 'bottom'
 const FLYER_AT_LEFT_EDGE = 'left'
 const FLYER_AT_RIGHT_EDGE = 'right'
-const NEIGHBOUR_RADIUS = 30
+const NEIGHBOUR_RADIUS = 50
 const RADIANS_TO_DEGREES = 180 / Math.PI
 const DEGREES_TO_RADIANS = Math.PI / 180
 const MAX_VELOCITY = 3
@@ -27,7 +27,7 @@ const MAX_VELOCITY = 3
 
 // ctx.fillRect(10, 10, 10, 50)
 
-const numberOfFliers = 3
+const numberOfFliers = 30
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
@@ -178,8 +178,8 @@ function getCohesionVector (currentFlyer, neighborhoodFlyers) {
   const currentFlyerPosition = currentFlyer.getPosition()
 
   const cohesionVector = {
-    xPosition: cohesionPoint.xPosition - currentFlyerPosition.xPosition,
-    yPosition: cohesionPoint.yPosition - currentFlyerPosition.yPosition
+    xPosition: (cohesionPoint.xPosition - currentFlyerPosition.xPosition) / 100,
+    yPosition: (cohesionPoint.yPosition - currentFlyerPosition.yPosition) / 100
   }
   return cohesionVector
 }
@@ -189,7 +189,7 @@ function getSeperationVector (currentFlyer, neighborhoodFlyers) {
   const seperationVector = neighborhoodFlyers.reduce((accumulated, current) => {
     const neighbourPosition = current.getPosition()
     const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourPosition)
-    if (distanceBetweenFlyers <= 10) {
+    if (distanceBetweenFlyers <= 17) {
       return {
         xPosition: accumulated.xPosition - neighbourPosition.xPosition + currentFlyerPosition.xPosition,
         yPosition: accumulated.yPosition - neighbourPosition.yPosition + currentFlyerPosition.yPosition
