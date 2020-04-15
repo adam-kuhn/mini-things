@@ -1,13 +1,9 @@
+import {CANVAS_MARGIN, NEIGHBOUR_RADIUS, DEGREES_TO_RADIANS, MAX_VELOCITY} from './config/config'
 import FlyingAgent from './flyingAgents'
 const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
 ctx.font = '600 10px "Font Awesome 5 Free"'
 // flyers within neighbour radius try to align themselves in the same orientation
-const CANVAS_MARGIN = 0
-const NEIGHBOUR_RADIUS = 50
-export const RADIANS_TO_DEGREES = 180 / Math.PI
-const DEGREES_TO_RADIANS = Math.PI / 180
-const MAX_VELOCITY = 3
 
 // // test rotate
 // ctx.fillStyle = '#FF0000'

@@ -1,4 +1,4 @@
-import {RADIANS_TO_DEGREES} from './index'
+import {RADIANS_TO_DEGREES} from './config/config'
 
 export default class FlyingAgent {
   constructor (id, startingPosition, fillStyle) {
