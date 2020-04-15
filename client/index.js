@@ -104,8 +104,8 @@ function moveRectangel (flyingAgents) {
       flyer.velocity.yVelocity *= -1
       yPosition = 0
     }
-    let newXPosition = flyer.velocity.xVelocity + xPosition
-    let newYPosition = flyer.velocity.yVelocity + yPosition
+    const newXPosition = flyer.velocity.xVelocity + xPosition
+    const newYPosition = flyer.velocity.yVelocity + yPosition
     flyer.setCurrentPosition(newXPosition, newYPosition)
     drawFlyer(flyer)
   })
