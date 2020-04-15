@@ -1,3 +1,5 @@
+import {RADIANS_TO_DEGREES} from './index'
+
 export default class FlyingAgent {
   constructor (id, startingPosition, fillStyle) {
     this.id = id
@@ -19,14 +21,21 @@ export default class FlyingAgent {
   setCurrentPosition (x, y) {
     this.currentPosition.xPosition = x
     this.currentPosition.yPosition = y
+    this._setOrientation()
   }
   getOrientation () {
     return this.orientationInDegrees
   }
-  setOrientation (orientation) {
-    this.orientationInDegrees = orientation
-  }
   getPosition () {
     return this.currentPosition
+  }
+  _setOrientation () {
+    const {xVelocity, yVelocity} = this.velocity
+    let flyerOrientation = Math.atan(yVelocity / xVelocity) * RADIANS_TO_DEGREES
+    // canvas origin (0, 0) is top left, so need to add 180 TODO: Math to confirm understanding
+    if (xVelocity < 0) {
+      flyerOrientation += 180
+    }
+    this.orientationInDegrees = flyerOrientation
   }
 }

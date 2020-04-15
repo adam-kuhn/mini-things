@@ -9,7 +9,7 @@ const FLYER_AT_BOTTOM = 'bottom'
 const FLYER_AT_LEFT_EDGE = 'left'
 const FLYER_AT_RIGHT_EDGE = 'right'
 const NEIGHBOUR_RADIUS = 50
-const RADIANS_TO_DEGREES = 180 / Math.PI
+export const RADIANS_TO_DEGREES = 180 / Math.PI
 const DEGREES_TO_RADIANS = Math.PI / 180
 const MAX_VELOCITY = 3
 
@@ -27,7 +27,7 @@ const MAX_VELOCITY = 3
 
 // ctx.fillRect(10, 10, 10, 50)
 
-const numberOfFliers = 30
+const numberOfFliers = 10
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
@@ -106,9 +106,6 @@ function moveRectangel (flyingAgents) {
     }
     let newXPosition = flyer.velocity.xVelocity + xPosition
     let newYPosition = flyer.velocity.yVelocity + yPosition
-    // this does not change orientation correctly
-    const flyerOrientation = Math.atan(newXPosition / newYPosition) * RADIANS_TO_DEGREES
-    flyer.setOrientation(flyerOrientation)
     flyer.setCurrentPosition(newXPosition, newYPosition)
     drawFlyer(flyer)
   })
