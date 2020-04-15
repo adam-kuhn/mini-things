@@ -4,10 +4,6 @@ const ctx = canvas.getContext('2d')
 ctx.font = '600 10px "Font Awesome 5 Free"'
 // flyers within neighbour radius try to align themselves in the same orientation
 const CANVAS_MARGIN = 0
-const FLYER_AT_TOP = 'top'
-const FLYER_AT_BOTTOM = 'bottom'
-const FLYER_AT_LEFT_EDGE = 'left'
-const FLYER_AT_RIGHT_EDGE = 'right'
 const NEIGHBOUR_RADIUS = 50
 export const RADIANS_TO_DEGREES = 180 / Math.PI
 const DEGREES_TO_RADIANS = Math.PI / 180
