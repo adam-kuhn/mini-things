@@ -3,21 +3,6 @@ import FlyingAgent from './flyingAgents'
 const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
 ctx.font = '600 10px "Font Awesome 5 Free"'
-// flyers within neighbour radius try to align themselves in the same orientation
-
-// // test rotate
-// ctx.fillStyle = '#FF0000'
-// ctx.fillRect(10, 10, 10, 50)
-
-// ctx.translate(5, 5)
-// ctx.rotate(45 * Math.PI / 180)
-// ctx.translate(-5, -5)
-// ctx.fillRect(10, 10, 10, 50)
-// ctx.fillStyle = 'blue'
-// // ctx.rotate(-45 * Math.PI / 180)
-// ctx.setTransform(1, 0, 0, 1, 0, 0) // so this sets the origin back to original. call this in my draw?
-
-// ctx.fillRect(10, 10, 10, 50)
 
 const numberOfFliers = 10
 let flyingAgents = []
@@ -33,7 +18,7 @@ flyingAgents.forEach(drawFlyer)
 window.requestAnimationFrame(animationFrame)
 function animationFrame () {
   clearCanvas()
-  moveRectangel(flyingAgents)
+  drawCanvas(flyingAgents)
   window.requestAnimationFrame(animationFrame)
 }
 
@@ -43,7 +28,7 @@ function clearCanvas () {
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 }
 
-function moveRectangel (flyingAgents) {
+function drawCanvas (flyingAgents) {
   flyingAgents.forEach((flyer, idx, self) => {
     const currentFlyerPosition = flyer.getPosition()
     let {xPosition, yPosition} = currentFlyerPosition
