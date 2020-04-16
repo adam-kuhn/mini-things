@@ -54,20 +54,8 @@ function drawCanvas (flyingAgents) {
       const yVelocity = neighbourhoodVector.yVelocity + coehsionVector.yPosition + separationVector.yPosition
       flyer.setVelocity(xVeloctiy, yVelocity)
     }
-    if (xPosition > canvas.width - CANVAS_MARGIN) {
-      flyer.velocity.xVelocity *= -1
-      xPosition = canvas.width
-    } else if (xPosition < CANVAS_MARGIN) {
-      flyer.velocity.xVelocity *= -1
-      xPosition = 0
-    }
-    if (yPosition > canvas.height - CANVAS_MARGIN) {
-      flyer.velocity.yVelocity *= -1
-      yPosition = canvas.height
-    } else if (yPosition < CANVAS_MARGIN) {
-      flyer.velocity.yVelocity *= -1
-      yPosition = 0
-    }
+    checkIfFlyerIsAtCanvasBoundary(flyer)
+
     const newXPosition = flyer.velocity.xVelocity + xPosition
     const newYPosition = flyer.velocity.yVelocity + yPosition
     flyer.setCurrentPosition(newXPosition, newYPosition)
@@ -159,4 +147,22 @@ function getSeperationVector (currentFlyer, neighborhoodFlyers) {
     return accumulated
   }, {xPosition: 0, yPosition: 0})
   return seperationVector
+}
+
+function checkIfFlyerIsAtCanvasBoundary (flyer) {
+  const {xPosition, yPosition} = flyer.getPosition()
+  if (xPosition > canvas.width - CANVAS_MARGIN) {
+    flyer.reverseXVelocityDirection()
+    flyer.setSpecificXPosition(canvas.width)
+  } else if (xPosition < CANVAS_MARGIN) {
+    flyer.reverseXVelocityDirection()
+    flyer.setSpecificXPosition(0)
+  }
+  if (yPosition > canvas.height - CANVAS_MARGIN) {
+    flyer.reverseYVelocityDirection()
+    flyer.setSpecificYPosition(canvas.height)
+  } else if (yPosition < CANVAS_MARGIN) {
+    flyer.reverseYVelocityDirection()
+    flyer.setSpecificYPosition(0)
+  }
 }

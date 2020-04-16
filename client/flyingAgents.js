@@ -34,6 +34,18 @@ export default class FlyingAgent {
   getPosition () {
     return this.currentPosition
   }
+  reverseXVelocityDirection () {
+    this.velocity.xVelocity *= -1
+  }
+  reverseYVelocityDirection () {
+    this.velocity.yVelocity *= -1
+  }
+  setSpecificXPosition (position) {
+    this.currentPosition.xPosition = position
+  }
+  setSpecificYPosition (position) {
+    this.currentPosition.yPosition = position
+  }
   _setOrientation () {
     const {xVelocity, yVelocity} = this.velocity
     let flyerOrientation = Math.atan(yVelocity / xVelocity) * RADIANS_TO_DEGREES
