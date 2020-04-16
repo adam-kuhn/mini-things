@@ -1,4 +1,4 @@
-import {CANVAS_MARGIN, NEIGHBOUR_RADIUS, DEGREES_TO_RADIANS, MAX_VELOCITY} from './config/config'
+import {CANVAS_MARGIN, NEIGHBOUR_RADIUS, DEGREES_TO_RADIANS} from './config/config'
 import FlyingAgent from './flyingAgents'
 const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
@@ -52,21 +52,8 @@ function drawCanvas (flyingAgents) {
       console.log('sep', separationVector)
       const xVeloctiy = neighbourhoodVector.xVelocity + coehsionVector.xPosition + separationVector.xPosition
       const yVelocity = neighbourhoodVector.yVelocity + coehsionVector.yPosition + separationVector.yPosition
-
-      flyer.velocity.xVelocity += xVeloctiy / 100
-      flyer.velocity.yVelocity += yVelocity / 100
+      flyer.setVelocity(xVeloctiy, yVelocity)
     }
-    if (flyer.velocity.xVelocity > MAX_VELOCITY) {
-      flyer.velocity.xVelocity = MAX_VELOCITY
-    } else if (flyer.velocity.xVelocity < -MAX_VELOCITY) {
-      flyer.velocity.xVelocity = -MAX_VELOCITY
-    }
-    if (flyer.velocity.yVelocity > MAX_VELOCITY) {
-      flyer.velocity.yVelocity = MAX_VELOCITY
-    } else if (flyer.velocity.yVelocity < -MAX_VELOCITY) {
-      flyer.velocity.yVelocity = -MAX_VELOCITY
-    }
-
     if (xPosition > canvas.width - CANVAS_MARGIN) {
       flyer.velocity.xVelocity *= -1
       xPosition = canvas.width

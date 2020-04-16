@@ -1,4 +1,4 @@
-import {RADIANS_TO_DEGREES} from './config/config'
+import {RADIANS_TO_DEGREES, MAX_VELOCITY} from './config/config'
 
 export default class FlyingAgent {
   constructor (id, startingPosition, fillStyle) {
@@ -23,6 +23,11 @@ export default class FlyingAgent {
     this.currentPosition.yPosition = y
     this._setOrientation()
   }
+  setVelocity (x, y) {
+    this.velocity.xVelocity += x / 100
+    this.velocity.yVelocity += y / 100
+    this._limitVelocity()
+  }
   getOrientation () {
     return this.orientationInDegrees
   }
@@ -37,5 +42,11 @@ export default class FlyingAgent {
       flyerOrientation += 180
     }
     this.orientationInDegrees = flyerOrientation
+  }
+  _limitVelocity () {
+    if (this.velocity.xVelocity > MAX_VELOCITY) this.velocity.xVelocity = MAX_VELOCITY
+    else if (this.velocity.xVelocity < -MAX_VELOCITY) this.velocity.xVelocity = -MAX_VELOCITY
+    if (this.velocity.yVelocity > MAX_VELOCITY) this.velocity.yVelocity = MAX_VELOCITY
+    else if (this.velocity.yVelocity < -MAX_VELOCITY) this.velocity.yVelocity = -MAX_VELOCITY
   }
 }
