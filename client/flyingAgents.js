@@ -54,11 +54,12 @@ export default class FlyingAgent {
     this.orientationInDegrees = flyerOrientation
   }
   _limitVelocity () {
-    if (this._velocity.xVelocity > MAX_VELOCITY) this._velocity.xVelocity = MAX_VELOCITY
-    else if (this._velocity.xVelocity < -MAX_VELOCITY) this._velocity.xVelocity = -MAX_VELOCITY
+    const {xVelocity, yVelocity} = this._velocity
+    if (xVelocity > MAX_VELOCITY) this._setXVelocity(MAX_VELOCITY)
+    else if (xVelocity < -MAX_VELOCITY) this._setXVelocity(-MAX_VELOCITY)
 
-    if (this._velocity.yVelocity > MAX_VELOCITY) this._velocity.yVelocity = MAX_VELOCITY
-    else if (this._velocity.yVelocity < -MAX_VELOCITY) this._velocity.yVelocity = -MAX_VELOCITY
+    if (yVelocity > MAX_VELOCITY) this._setYVelocity(MAX_VELOCITY)
+    else if (yVelocity < -MAX_VELOCITY) this._setYVelocity(-MAX_VELOCITY)
   }
   _checkIfFlyerIsAtCanvasBoundary (canvas) {
     const {xPosition, yPosition} = this._currentPosition
@@ -67,6 +68,12 @@ export default class FlyingAgent {
 
     if (yPosition > canvas.height - CANVAS_MARGIN) this._reduceYVelocity()
     else if (yPosition < CANVAS_MARGIN) this._increaseYVelocity()
+  }
+  _setXVelocity (velocity) {
+    this._velocity.xVelocity = velocity
+  }
+  _setYVelocity (velocity) {
+    this._velocity.yVelocity = velocity
   }
   _reduceXVelocity () {
     this._velocity.xVelocity -= VELOCITY_CHANGE_AMOUNT
