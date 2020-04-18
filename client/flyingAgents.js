@@ -5,7 +5,7 @@ export default class FlyingAgent {
     this.id = id
     this.orientationInDegrees = 45
     this.dimensions = {
-      width: 10,
+      width: 15,
       height: 10
     }
     this.currentPosition = {
@@ -13,15 +13,15 @@ export default class FlyingAgent {
       yPosition: startingPosition
     }
     this.velocity = {
-      xVelocity: 0.1,
-      yVelocity: 0.5
+      xVelocity: 1,
+      yVelocity: 0
     }
     this.fillStyle = fillStyle
   }
   updateCurrentPosition (canvas) {
     this._checkIfFlyerIsAtCanvasBoundary(canvas)
-    this.currentPosition.xPosition += this.velocity.xVelocity
-    this.currentPosition.yPosition += this.velocity.yVelocity
+    this.currentPosition.xPosition += this.velocity.xVelocity / 5
+    this.currentPosition.yPosition += this.velocity.yVelocity / 5
     this._setOrientation()
   }
   setVelocity (x, y) {
@@ -34,6 +34,12 @@ export default class FlyingAgent {
   }
   getPosition () {
     return this.currentPosition
+  }
+  getDimensions () {
+    return this.dimensions
+  }
+  getFillStyle () {
+    return this.fillStyle
   }
   _reverseXVelocityDirection () {
     this.velocity.xVelocity *= -1
@@ -62,6 +68,9 @@ export default class FlyingAgent {
     if (this.velocity.yVelocity > MAX_VELOCITY) this.velocity.yVelocity = MAX_VELOCITY
     else if (this.velocity.yVelocity < -MAX_VELOCITY) this.velocity.yVelocity = -MAX_VELOCITY
   }
+  // could make it so they adjust the vector when X distance away from edge
+  // so that they gradually slow and change direction on their own
+  // rather then have the abrupt change as it is now
   _checkIfFlyerIsAtCanvasBoundary (canvas) {
     const {xPosition, yPosition} = this.currentPosition
     if (xPosition > canvas.width - CANVAS_MARGIN) {

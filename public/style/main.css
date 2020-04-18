@@ -1,10 +1,7 @@
 body {
   background-color: slategray;
 }
-canvas {
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 600;
-}
+
 #flocking-behaviour {
   background-color: green;
   margin: 5%;

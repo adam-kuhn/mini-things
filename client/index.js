@@ -5,9 +5,8 @@ import FlyingAgent from './flyingAgents'
 
 const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
-ctx.font = '600 10px "Font Awesome 5 Free"'
 
-const numberOfFliers = 10
+const numberOfFliers = 30
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
@@ -60,23 +59,27 @@ function drawCanvas (flyingAgents) {
 
 // look into Path2D
 function drawFlyer (flyer) {
-  const {xPosition, yPosition} = flyer.currentPosition
-  ctx.fillStyle = flyer.fillStyle
   rotateContextBasedOnOrientation(flyer)
-  // TODO: Either draw custom shape and remove space ship or fix alignment
-  // text is drawn above a horizontal from the origin. Resulting in the space ship,
-  // be slightly off the correct orietation in which it is moving
-  ctx.fillText('\uf197', xPosition, yPosition)
+  drawFlyerShape(flyer)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
 }
 
 function rotateContextBasedOnOrientation (flyer) {
-  const {xPosition, yPosition} = flyer.currentPosition
-  const {width, height} = flyer.dimensions
-  const xOriginForTranslate = xPosition + (width / 2)
-  const yOriginForTranslate = yPosition + (height / 2)
+  const {xPosition, yPosition} = flyer.getPosition()
+  const {width} = flyer.getDimensions()
+  const xOriginForTranslate = xPosition - (width / 2)
   const flyerOrientation = flyer.getOrientation()
-  ctx.translate(xOriginForTranslate, yOriginForTranslate)
+  ctx.translate(xOriginForTranslate, yPosition)
   ctx.rotate(flyerOrientation * DEGREES_TO_RADIANS)
-  ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
+  ctx.translate(-xOriginForTranslate, -yPosition)
+}
+function drawFlyerShape (flyer) {
+  const {xPosition, yPosition} = flyer.getPosition()
+  const {width, height} = flyer.getDimensions()
+  ctx.fillStyle = flyer.getFillStyle()
+  ctx.beginPath()
+  ctx.moveTo(xPosition + width / 3, yPosition)
+  ctx.lineTo(xPosition - width * 2 / 3, yPosition - height / 2)
+  ctx.lineTo(xPosition - width * 2 / 3, yPosition + height / 2)
+  ctx.fill()
 }
