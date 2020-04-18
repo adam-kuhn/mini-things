@@ -1,3 +1,5 @@
+const MIN_DISTANCE_BETWEEN_FLYERS = 17
+
 export function calculateDistanceBetweenTwoFlyers (currentFlyerPosition, neighbourFlyerPosition) {
   const yDifference = neighbourFlyerPosition.yPosition - currentFlyerPosition.yPosition
   const xDifference = neighbourFlyerPosition.xPosition - currentFlyerPosition.xPosition
@@ -50,7 +52,7 @@ export function getSeperationVector (currentFlyer, neighborhoodFlyers) {
   const seperationVector = neighborhoodFlyers.reduce((accumulated, current) => {
     const neighbourPosition = current.getPosition()
     const distanceBetweenFlyers = calculateDistanceBetweenTwoFlyers(currentFlyerPosition, neighbourPosition)
-    if (distanceBetweenFlyers <= 17) {
+    if (distanceBetweenFlyers <= MIN_DISTANCE_BETWEEN_FLYERS) {
       return {
         xPosition: accumulated.xPosition - neighbourPosition.xPosition + currentFlyerPosition.xPosition,
         yPosition: accumulated.yPosition - neighbourPosition.yPosition + currentFlyerPosition.yPosition
