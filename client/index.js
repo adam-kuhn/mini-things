@@ -6,11 +6,11 @@ import FlyingAgent from './flyingAgents'
 const canvas = document.getElementById('flocking-behaviour')
 const ctx = canvas.getContext('2d')
 
-const numberOfFliers = 30
+const numberOfFliers = 100
 let flyingAgents = []
 for (let i = 0; i < numberOfFliers; i++) {
   const startingPosition = i * 10
-  const fillStyle = `#FF${i * 1000}`
+  const fillStyle = getFillColor(i)
   const newFlyer = new FlyingAgent(i, startingPosition, fillStyle)
   flyingAgents = [...flyingAgents, newFlyer]
 }
@@ -18,6 +18,20 @@ for (let i = 0; i < numberOfFliers; i++) {
 flyingAgents.forEach(drawFlyer)
 
 window.requestAnimationFrame(animationFrame)
+
+function getFillColor (number) {
+  if (number < 10) return 'red'
+  if (number < 20) return 'blue'
+  if (number < 30) return 'purple'
+  if (number < 40) return 'salmon'
+  if (number < 50) return 'pink'
+  if (number < 60) return 'cyan'
+  if (number < 70) return 'orange'
+  if (number < 80) return 'white'
+  if (number < 90) return 'black'
+  return 'yellow'
+}
+
 function animationFrame () {
   clearCanvas()
   drawCanvas(flyingAgents)
