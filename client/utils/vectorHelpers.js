@@ -9,10 +9,12 @@ export function calculateDistanceBetweenTwoFlyers (currentFlyerPosition, neighbo
 }
 
 export function matchNeighbourhoodVector (currentFlyer, neighborhoodFlyers) {
+  const {xVelocity, yVelocity} = currentFlyer.getVelocity()
   const sumOfVelocities = neighborhoodFlyers.reduce((accumulated, current) => {
+    const {xVelocity, yVelocity} = current.getVelocity()
     return {
-      xVelocity: accumulated.xVelocity + current.velocity.xVelocity,
-      yVelocity: accumulated.yVelocity + current.velocity.yVelocity
+      xVelocity: accumulated.xVelocity + xVelocity,
+      yVelocity: accumulated.yVelocity + yVelocity
     }
   }, {xVelocity: 0, yVelocity: 0})
   const averagerVelocity = {
@@ -20,8 +22,8 @@ export function matchNeighbourhoodVector (currentFlyer, neighborhoodFlyers) {
     yVelocity: sumOfVelocities.yVelocity / neighborhoodFlyers.length
   }
   const matchedVelocity = {
-    xVelocity: averagerVelocity.xVelocity - currentFlyer.velocity.xVelocity,
-    yVelocity: averagerVelocity.yVelocity - currentFlyer.velocity.yVelocity
+    xVelocity: averagerVelocity.xVelocity - xVelocity,
+    yVelocity: averagerVelocity.yVelocity - yVelocity
   }
   return matchedVelocity
 }
