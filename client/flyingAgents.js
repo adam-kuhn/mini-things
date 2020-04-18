@@ -1,4 +1,4 @@
-import {RADIANS_TO_DEGREES, MAX_VELOCITY} from './config/config'
+import {RADIANS_TO_DEGREES, MAX_VELOCITY, CANVAS_MARGIN} from './config/config'
 
 export default class FlyingAgent {
   constructor (id, startingPosition, fillStyle) {
@@ -18,7 +18,8 @@ export default class FlyingAgent {
     }
     this.fillStyle = fillStyle
   }
-  updateCurrentPosition () {
+  updateCurrentPosition (canvas) {
+    this._checkIfFlyerIsAtCanvasBoundary(canvas)
     this.currentPosition.xPosition += this.velocity.xVelocity
     this.currentPosition.yPosition += this.velocity.yVelocity
     this._setOrientation()
@@ -34,16 +35,16 @@ export default class FlyingAgent {
   getPosition () {
     return this.currentPosition
   }
-  reverseXVelocityDirection () {
+  _reverseXVelocityDirection () {
     this.velocity.xVelocity *= -1
   }
-  reverseYVelocityDirection () {
+  _reverseYVelocityDirection () {
     this.velocity.yVelocity *= -1
   }
-  setSpecificXPosition (position) {
+  _setSpecificXPosition (position) {
     this.currentPosition.xPosition = position
   }
-  setSpecificYPosition (position) {
+  _setSpecificYPosition (position) {
     this.currentPosition.yPosition = position
   }
   _setOrientation () {
@@ -60,5 +61,22 @@ export default class FlyingAgent {
     else if (this.velocity.xVelocity < -MAX_VELOCITY) this.velocity.xVelocity = -MAX_VELOCITY
     if (this.velocity.yVelocity > MAX_VELOCITY) this.velocity.yVelocity = MAX_VELOCITY
     else if (this.velocity.yVelocity < -MAX_VELOCITY) this.velocity.yVelocity = -MAX_VELOCITY
+  }
+  _checkIfFlyerIsAtCanvasBoundary (canvas) {
+    const {xPosition, yPosition} = this.currentPosition
+    if (xPosition > canvas.width - CANVAS_MARGIN) {
+      this._reverseXVelocityDirection()
+      this._setSpecificXPosition(canvas.width)
+    } else if (xPosition < CANVAS_MARGIN) {
+      this._reverseXVelocityDirection()
+      this._setSpecificXPosition(0)
+    }
+    if (yPosition > canvas.height - CANVAS_MARGIN) {
+      this._reverseYVelocityDirection()
+      this._setSpecificYPosition(canvas.height)
+    } else if (yPosition < CANVAS_MARGIN) {
+      this._reverseYVelocityDirection()
+      this._setSpecificYPosition(0)
+    }
   }
 }

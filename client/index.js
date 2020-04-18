@@ -1,4 +1,4 @@
-import {CANVAS_MARGIN, NEIGHBOUR_RADIUS, DEGREES_TO_RADIANS} from './config/config'
+import {NEIGHBOUR_RADIUS, DEGREES_TO_RADIANS} from './config/config'
 import {calculateDistanceBetweenTwoFlyers, matchNeighbourhoodVector,
   getCohesionVector, getSeperationVector} from './utils/vectorHelpers'
 import FlyingAgent from './flyingAgents'
@@ -53,8 +53,7 @@ function drawCanvas (flyingAgents) {
       const yVelocity = neighbourhoodVector.yVelocity + coehsionVector.yPosition + separationVector.yPosition
       flyer.setVelocity(xVeloctiy, yVelocity)
     }
-    checkIfFlyerIsAtCanvasBoundary(flyer)
-    flyer.updateCurrentPosition()
+    flyer.updateCurrentPosition(canvas)
     drawFlyer(flyer)
   })
 }
@@ -80,22 +79,4 @@ function rotateContextBasedOnOrientation (flyer) {
   ctx.translate(xOriginForTranslate, yOriginForTranslate)
   ctx.rotate(flyerOrientation * DEGREES_TO_RADIANS)
   ctx.translate(-xOriginForTranslate, -yOriginForTranslate)
-}
-
-function checkIfFlyerIsAtCanvasBoundary (flyer) {
-  const {xPosition, yPosition} = flyer.getPosition()
-  if (xPosition > canvas.width - CANVAS_MARGIN) {
-    flyer.reverseXVelocityDirection()
-    flyer.setSpecificXPosition(canvas.width)
-  } else if (xPosition < CANVAS_MARGIN) {
-    flyer.reverseXVelocityDirection()
-    flyer.setSpecificXPosition(0)
-  }
-  if (yPosition > canvas.height - CANVAS_MARGIN) {
-    flyer.reverseYVelocityDirection()
-    flyer.setSpecificYPosition(canvas.height)
-  } else if (yPosition < CANVAS_MARGIN) {
-    flyer.reverseYVelocityDirection()
-    flyer.setSpecificYPosition(0)
-  }
 }
