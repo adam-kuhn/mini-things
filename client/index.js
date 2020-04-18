@@ -31,7 +31,6 @@ function clearCanvas () {
 function drawCanvas (flyingAgents) {
   flyingAgents.forEach((flyer, idx, self) => {
     const currentFlyerPosition = flyer.getPosition()
-    let {xPosition, yPosition} = currentFlyerPosition
     const flyersInNeighbourhood = self.filter((flyer2, idx2) => {
       if (idx !== idx2) {
         const neighbourFlyer = flyer2.getPosition()
@@ -55,10 +54,7 @@ function drawCanvas (flyingAgents) {
       flyer.setVelocity(xVeloctiy, yVelocity)
     }
     checkIfFlyerIsAtCanvasBoundary(flyer)
-
-    const newXPosition = flyer.velocity.xVelocity + xPosition
-    const newYPosition = flyer.velocity.yVelocity + yPosition
-    flyer.setCurrentPosition(newXPosition, newYPosition)
+    flyer.updateCurrentPosition()
     drawFlyer(flyer)
   })
 }

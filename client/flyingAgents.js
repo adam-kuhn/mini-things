@@ -18,9 +18,9 @@ export default class FlyingAgent {
     }
     this.fillStyle = fillStyle
   }
-  setCurrentPosition (x, y) {
-    this.currentPosition.xPosition = x
-    this.currentPosition.yPosition = y
+  updateCurrentPosition () {
+    this.currentPosition.xPosition += this.velocity.xVelocity
+    this.currentPosition.yPosition += this.velocity.yVelocity
     this._setOrientation()
   }
   setVelocity (x, y) {
