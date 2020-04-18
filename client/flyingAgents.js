@@ -1,4 +1,4 @@
-import {RADIANS_TO_DEGREES, MAX_VELOCITY, CANVAS_MARGIN} from './config/config'
+import {RADIANS_TO_DEGREES, MAX_VELOCITY, CANVAS_MARGIN, VELOCITY_CHANGE_AMOUNT} from './config/config'
 
 export default class FlyingAgent {
   constructor (id, startingPosition, fillStyle) {
@@ -41,18 +41,6 @@ export default class FlyingAgent {
   getFillStyle () {
     return this.fillStyle
   }
-  _reverseXVelocityDirection () {
-    this.velocity.xVelocity *= -1
-  }
-  _reverseYVelocityDirection () {
-    this.velocity.yVelocity *= -1
-  }
-  _setSpecificXPosition (position) {
-    this.currentPosition.xPosition = position
-  }
-  _setSpecificYPosition (position) {
-    this.currentPosition.yPosition = position
-  }
   _setOrientation () {
     const {xVelocity, yVelocity} = this.velocity
     let flyerOrientation = Math.atan(yVelocity / xVelocity) * RADIANS_TO_DEGREES
@@ -65,27 +53,28 @@ export default class FlyingAgent {
   _limitVelocity () {
     if (this.velocity.xVelocity > MAX_VELOCITY) this.velocity.xVelocity = MAX_VELOCITY
     else if (this.velocity.xVelocity < -MAX_VELOCITY) this.velocity.xVelocity = -MAX_VELOCITY
+
     if (this.velocity.yVelocity > MAX_VELOCITY) this.velocity.yVelocity = MAX_VELOCITY
     else if (this.velocity.yVelocity < -MAX_VELOCITY) this.velocity.yVelocity = -MAX_VELOCITY
   }
-  // could make it so they adjust the vector when X distance away from edge
-  // so that they gradually slow and change direction on their own
-  // rather then have the abrupt change as it is now
   _checkIfFlyerIsAtCanvasBoundary (canvas) {
     const {xPosition, yPosition} = this.currentPosition
-    if (xPosition > canvas.width - CANVAS_MARGIN) {
-      this._reverseXVelocityDirection()
-      this._setSpecificXPosition(canvas.width)
-    } else if (xPosition < CANVAS_MARGIN) {
-      this._reverseXVelocityDirection()
-      this._setSpecificXPosition(0)
-    }
-    if (yPosition > canvas.height - CANVAS_MARGIN) {
-      this._reverseYVelocityDirection()
-      this._setSpecificYPosition(canvas.height)
-    } else if (yPosition < CANVAS_MARGIN) {
-      this._reverseYVelocityDirection()
-      this._setSpecificYPosition(0)
-    }
+    if (xPosition > canvas.width - CANVAS_MARGIN) this._reduceXVelocity()
+    else if (xPosition < CANVAS_MARGIN) this._increaseXVelocity()
+
+    if (yPosition > canvas.height - CANVAS_MARGIN) this._reduceYVelocity()
+    else if (yPosition < CANVAS_MARGIN) this._increaseYVelocity()
+  }
+  _reduceXVelocity () {
+    this.velocity.xVelocity -= VELOCITY_CHANGE_AMOUNT
+  }
+  _reduceYVelocity () {
+    this.velocity.yVelocity -= VELOCITY_CHANGE_AMOUNT
+  }
+  _increaseXVelocity () {
+    this.velocity.xVelocity += VELOCITY_CHANGE_AMOUNT
+  }
+  _increaseYVelocity () {
+    this.velocity.yVelocity += VELOCITY_CHANGE_AMOUNT
   }
 }
