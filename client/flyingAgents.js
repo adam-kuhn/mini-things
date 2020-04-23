@@ -5,8 +5,8 @@ export default class FlyingAgent {
     this.id = id
     this._orientationInDegrees = 45
     this._dimensions = {
-      width: 15,
-      height: 10
+      width: 7.5,
+      height: 5
     }
     this._currentPosition = {
       xPosition: startingPosition,
